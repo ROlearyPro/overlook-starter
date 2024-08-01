@@ -2,3 +2,44 @@
 body {
   background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
 }
+.turing-logo{
+  max-width: 100%;
+  max-height: 50%;
+  min-inline-size: 5%;
+}
+header{
+  padding: 40px;
+  /* padding-bottom: 80px; */
+  color: #090808;
+  display: flex;
+  height: 2px;
+  background-color: rgb(251, 227, 181);
+  border: 3px solid white;
+  align-items: center;
+  justify-content: space-between;
+
+}
+.logo-container {
+  display: flex;
+  height: 90px;
+  margin-top: 30px;
+}
+
+.test-zone {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  background-color: white;
+  text-align: center;
+}
+.price-zone{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  background-color: greenyellow;
+  text-align: center;
+}
+.customer-class {
+  min-width: 50%;
+  background-color: bisque;
+}

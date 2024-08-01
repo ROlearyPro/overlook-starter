@@ -1,6 +1,8 @@
 import { customerPromise, currentCustomer, customerList, randomCustomer, postBooking } from './apiCaller.js';
-import { setDataVals, receivedRooms, recievedCustomers, recievedBookings, receivedCustomers, currentBookings } from './functionCalls.js';
+import { setDataVals, receivedRooms, recievedCustomers, recievedBookings, receivedCustomers, currentBookings, hasSpent } from './functionCalls.js';
 const testArea = document.querySelector('.test-zone');
+const userNameArea = document.querySelector('.username-display');
+const priceArea = document.querySelector('.price-zone');
 let testArray = [];
 
 
@@ -10,24 +12,34 @@ Promise.all([customerPromise]).then((values) => { randomCustomer(values) })
 
 async function testFunction1() {
     await setDataVals();
-    receivedCustomers.forEach(element => {
-        testArea.innerHTML += (element.name + '\n<br>');
+    
+    var bookingDisplayData = await currentBookings();
+    console.log(bookingDisplayData)
+    bookingDisplayData.forEach(element => {
+        testArea.innerHTML += (`<div class = "customer-class container-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
     });
+
+    // receivedCustomers.forEach(element => {
+    //     testArea.innerHTML += (`<div class = "customer-class container-for-customer-${element.userID}"> ${element.name} </div>`);
+    // });
     // postBooking();
 
 }
-async function testFunction2() {
+async function setUserName() {
     await setDataVals();
-    // receivedRooms.forEach(element => {
-    //     testArea.innerHTML += (Object.entries(element) + ' \n<br>');
-
-    // });
-    // postBooking();
+    userNameArea.innerHTML= `${currentCustomer.name}`;
     console.log(recievedBookings);
+}
+
+async function tester (){
+    await setDataVals();
+    priceArea.innerHTML+=`${await hasSpent(currentCustomer.id)} spent on rooms so far.`;
+    console.log(currentCustomer)
 }
 
 // Todo: implement total amount spent on rooms
 
 testFunction1();
-testFunction2();
+setUserName();
 currentBookings();
+tester();
