@@ -1,4 +1,4 @@
-import { bookingsPromise, customerPromise, roomsPromise, handleBookings, handleRooms, handleCustomers, bookingData, roomData, customerList, currentCustomer } from "./apiCaller";
+import { bookingsPromise, customerPromise, roomsPromise, handleBookings, handleRooms, handleCustomers, currentCustomer, postBooking, updateInfo } from "./apiCaller";
 Promise.all([bookingsPromise]).then((values) => { handleBookings(values) });
 Promise.all([customerPromise]).then((values) => { handleCustomers(values) });
 Promise.all([roomsPromise]).then((values) => { handleRooms(values) });
@@ -6,9 +6,7 @@ let recievedBookings;
 let receivedCustomers;
 let receivedRooms;
 let currentFilter;
-let currentDateSelection;
 
-const filterShowButton = document.querySelector('.dropbtn');
 
 async function listData() {
     // console.log((await bookingsPromise).bookings);
@@ -26,11 +24,8 @@ async function setDataVals() {
 
 }
 async function currentBookings() {
-    var currentlyBooked = (await bookingsPromise).bookings
-    await currentCustomer;
-    await receivedRooms;
-    setDataVals();
-    var userBookings = currentlyBooked.filter((values) => (values.userID === currentCustomer.id));
+    await Promise.all([bookingsPromise, customerPromise, roomsPromise])
+    var userBookings = recievedBookings.filter((values) => (values.userID === currentCustomer.id));
     return userBookings
     // todo: Clean up, show in a table?
 }
@@ -65,17 +60,21 @@ async function findFreeRooms(date, currentFilter = null) {
     }
     return unbookedRooms;
 }
+function bookRoom() {
+    console.log(this);
+    var numHolder = this.roomNum;
+    var currentDateSelection = this.currDate;
+    postBooking(currentDateSelection, currentCustomer.id, numHolder);
+    alert('Booking Info Submitted!');
 
-async function showFilterRoomType() {
-    document.getElementById("myDropdown").classList.toggle("show");
-
+    updateInfo();
 }
 
-function setFilter(){
-    //TODO: add function to set currentFilter based on button clicked, add event listeners for each kind of room type
+
+function setFilter() {
+    currentFilter = this.filterVal;
 }
 
-filterShowButton.addEventListener('click', showFilterRoomType)
 
 
 
@@ -84,14 +83,12 @@ export {
     receivedRooms,
     recievedBookings,
     setDataVals,
-    // totalSpent,
     currentBookings,
     hasSpent,
     findFreeRooms,
-    showFilterRoomType,
     currentFilter,
-    currentDateSelection,
-
+    bookRoom,
+    setFilter,
 
 
 }

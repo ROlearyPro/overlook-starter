@@ -1,22 +1,20 @@
 
-const customerPromise = fetch("http://localhost:3001/api/v1/customers").then((response) => response.json());
+var customerPromise = fetch("http://localhost:3001/api/v1/customers").then((response) => response.json());
 
-const roomsPromise = fetch("http://localhost:3001/api/v1/rooms").then((response) => response.json());
+var roomsPromise = fetch("http://localhost:3001/api/v1/rooms").then((response) => response.json());
 
-const bookingsPromise = fetch("http://localhost:3001/api/v1/bookings").then((response) => response.json());
+var bookingsPromise = fetch("http://localhost:3001/api/v1/bookings").then((response) => response.json());
 
-const firstCustomerPromise = fetch("http://localhost:3001/api/v1/customers/1").then((response) => response.json());
+var firstCustomerPromise = fetch("http://localhost:3001/api/v1/customers/1").then((response) => response.json());
 let currentCustomer;
 let customerList = ["a", "b", "c"];
 let bookingData;
 let roomData;
 
+
 const getRandomIndex = (array) => {
     return Math.floor(Math.random() * array.length);
 };
-
-
-console.log('This is the JavaScript entry file - your code begins here.');
 
 
 const handleCustomers = (response) => {
@@ -32,18 +30,16 @@ const handleBookings = (response) => {
 }
 
 async function randomCustomer(response) {
-    customerList = response[0];
-    currentCustomer = customerList.customers[getRandomIndex(customerList.customers)];
-    console.log(currentCustomer.name);
+    customerList = response[0].customers;
+    currentCustomer = customerList[getRandomIndex(customerList)];
 };
-function postBooking() {
+function postBooking(date, customerID, roomNumber) {
     fetch('http://localhost:3001/api/v1/bookings', {
         method: 'POST',
         body: JSON.stringify({
-            userID: currentCustomer.id,
-            date:"2027/7/08",
-            roomNumber:5,       
-            //TODO: Modify to receive roomNumber, Date, maybe currentCustomer ID from global variables depending on what is clicked
+            userID: customerID,
+            date: date,
+            roomNumber: roomNumber,       
         }),
         headers: {
             'Content-Type': 'application/json'
@@ -54,7 +50,13 @@ function postBooking() {
         .catch(err => console.log('ERROR: ', err));
 
 }
-// postBooking();
+const updateInfo = () =>{
+    customerPromise = fetch("http://localhost:3001/api/v1/customers").then((response) => response.json());
+    roomsPromise = fetch("http://localhost:3001/api/v1/rooms").then((response) => response.json());
+    bookingsPromise = fetch("http://localhost:3001/api/v1/bookings").then((response) => response.json());
+    firstCustomerPromise = fetch("http://localhost:3001/api/v1/customers/1").then((response) => response.json());
+}
+
 export {
     customerPromise,
     roomsPromise,
@@ -69,4 +71,5 @@ export {
     handleRooms,
     handleCustomers,
     postBooking,
+    updateInfo,
 }

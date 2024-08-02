@@ -1,39 +1,45 @@
-import { customerPromise, currentCustomer, customerList, randomCustomer, postBooking } from './apiCaller.js';
-import { setDataVals, receivedRooms, recievedCustomers, recievedBookings, receivedCustomers, currentBookings, hasSpent, findFreeRooms, currentFilter, currentDateSelection } from './functionCalls.js';
-const testArea = document.querySelector('.test-zone');
+import { customerPromise, currentCustomer, randomCustomer } from './apiCaller.js';
+import { setDataVals, currentBookings, hasSpent, findFreeRooms, currentFilter, bookRoom, setFilter } from './functionCalls.js';
+const reservationArea = document.querySelector('.prev-reservation-area');
 const userNameArea = document.querySelector('.username-display');
 const priceArea = document.querySelector('.price-zone');
 const searchRoomsButton = document.querySelector('.search-button');
 const searchResults = document.querySelector('.search-results');
+const filterShowButton = document.querySelector('.dropbtn');
+const filterButtonSingle = document.querySelector('.filter-type-single');
+const filterButtonJunior = document.querySelector('.filter-type-junior');
+const filterButtonSuite = document.querySelector('.filter-type-suite');
+const filterButtonResidential = document.querySelector('.filter-type-residential');
+filterButtonSingle.filterVal = 'single room';
+filterButtonJunior.filterVal = 'junior suite';
+filterButtonSuite.filterVal = 'suite';
+filterButtonResidential.filterVal = 'residential suite';
 let testArray = [];
+let currentDateSelection;
+
+
 
 Promise.all([customerPromise]).then((values) => { randomCustomer(values) })
 
-async function testFunction1() {
+async function showBookedRooms() {
+
     await setDataVals();
 
     var bookingDisplayData = await currentBookings();
-    console.log(bookingDisplayData)
+    // console.log(bookingDisplayData)
+    reservationArea.innerHTML = null;
     bookingDisplayData.forEach(element => {
-        testArea.innerHTML += (`<div class = "customer-class container-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
+        reservationArea.innerHTML += (`<div class = "customer-class container-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
     });
-
-    // receivedCustomers.forEach(element => {
-    //     testArea.innerHTML += (`<div class = "customer-class container-for-customer-${element.userID}"> ${element.name} </div>`);
-    // });
-    // postBooking();
-
 }
 async function setUserName() {
     await setDataVals();
-    userNameArea.innerHTML = `${currentCustomer.name}`;
-    console.log(recievedBookings);
+    userNameArea.innerHTML = `<h1>${currentCustomer.name}</h1>`;
 }
 
 async function tester() {
     await setDataVals();
-    priceArea.innerHTML += `${await hasSpent(currentCustomer.id)} spent on rooms so far.`;
-    console.log(currentCustomer)
+    priceArea.innerHTML = `<h4>${(await hasSpent(currentCustomer.id)).toFixed(2)} spent on rooms so far.</h4>`;
 }
 
 async function userInput() {
@@ -42,43 +48,52 @@ async function userInput() {
     freeRooms = await findFreeRooms(input, currentFilter);
     currentDateSelection = input;
     var buttonArray = []
+    searchResults.innerHTML = null;
     if (freeRooms === null) {
         alert('We\'re so sorry! We currently do not have rooms available for that date. You might have better luck trying for a different day?');
     } else {
         for (var i = 0; i < freeRooms.length; i++) {
             searchResults.innerHTML += `<div class = "result-class container-for-results-${freeRooms[i].number}"> The ${freeRooms[i].roomType} with room number ${freeRooms[i].number} is free on ${input}. 
-            <button class="book-button-${freeRooms[i].number}" id="book-${freeRooms[i].number}">Book</button>
+            <button class="book-button book-button-${freeRooms[i].number}" id="book-${freeRooms[i].number}">Book</button>
             </div> `;
 
         }
         for(var i = 0; i < freeRooms.length; i++){
             buttonArray[i] = document.querySelector(`.book-button-${freeRooms[i].number}`);
             buttonArray[i].roomNum = freeRooms[i].number;
+            buttonArray[i].currDate = currentDateSelection;
+            
             buttonArray[i].addEventListener('click', bookRoom);
+            buttonArray[i].addEventListener('click', userInput);
+            buttonArray[i].addEventListener('click', showBookedRooms);
+            buttonArray[i].addEventListener('click', tester);
             
         }
-        console.log(buttonArray)
     };       
-
-    console.log(buttonArray);
 };
 
-
-function bookRoom () {
-    console.log(this);
-    var numHolder = this.roomNum;
-    console.log("booked!");
-    console.log(currentDateSelection);
-    console.log(currentCustomer.name);
-    console.log(currentCustomer.id);
-    console.log(numHolder)
-    // TODO: actually post the booking, we can already access all the needed data.
+const showFilterRoomType=()=> {
+    document.getElementById("myDropdown").classList.toggle("show");
 }
+filterShowButton.addEventListener('click', showFilterRoomType)
+
 
 
 searchRoomsButton.addEventListener('click', userInput);
+filterButtonSingle.addEventListener('click', setFilter);
+filterButtonSingle.addEventListener('click', userInput);
 
-testFunction1();
+filterButtonJunior.addEventListener('click', setFilter);
+filterButtonJunior.addEventListener('click', userInput);
+
+filterButtonSuite.addEventListener('click', setFilter);
+filterButtonSuite.addEventListener('click', userInput);
+
+filterButtonResidential.addEventListener('click', setFilter);
+filterButtonResidential.addEventListener('click', userInput);
+
+
+showBookedRooms();
 setUserName();
 currentBookings();
 tester();

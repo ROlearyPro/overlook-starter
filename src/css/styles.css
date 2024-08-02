@@ -1,13 +1,14 @@
-
 body {
-  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+  background: radial-gradient(circle, rgb(87, 55, 112) 0%, rgb(54, 65, 117) 100%);
 }
-.turing-logo{
+
+.turing-logo {
   max-width: 100%;
   max-height: 50%;
   min-inline-size: 5%;
 }
-header{
+
+header {
   padding: 40px;
   /* padding-bottom: 80px; */
   color: #090808;
@@ -19,36 +20,62 @@ header{
   justify-content: space-between;
 
 }
+
 .logo-container {
   display: flex;
   height: 90px;
   margin-top: 30px;
 }
 
-.test-zone {
+.prev-reservation-area {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  background-color: white;
+  background-color: rgb(207, 209, 249);
   text-align: center;
 }
-.price-zone{
+
+.price-zone {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  background-color: greenyellow;
+  justify-content: end;
+  padding-right: 30px;
+  background-color: rgb(169, 238, 242);
   text-align: center;
 }
+.search-area{
+  display: flex;
+}
+.result-class{
+  display: inline-flex;
+  justify-content: space-between;
+}
+.search-results{
+  display:grid;
+  /* flex-wrap: nowrap; */
+  /* flex-direction: column; */
+  padding-right: 30px;
+  background-color: rgb(152, 159, 197);
+}
+.book-button {
+  border-radius: 10px;
+  margin-left:5px;
+  width: 90px;
+  background-color: rgb(160, 204, 255);
+  border: 1.5px solid white;
+}
+
 .customer-class {
   min-width: 50%;
-  background-color: bisque;
+  background-color: rgb(202, 222, 243);
 }
 
 
 .quick-search {
   display: flex;
   justify-content: center;
-  border: 3px solid white;
+  border: 3px solid rgb(212, 252, 244);
   margin: 80px;
   padding: 150px 75px 150px 75px;
   position: relative;
@@ -69,8 +96,8 @@ header{
   border: none;
   width: 250px;
   font-size: medium;
-  background-color: rgb(255, 222, 160);
-  border: 2px solid white;
+  background-color: rgb(160, 204, 255);
+  border: 2px solid rgb(211, 233, 255);
 }
 
 .input-bar::placeholder {
@@ -84,8 +111,8 @@ header{
   border: none;
   width: 250px;
   font-size: smaller;
-  background-color: rgb(255, 222, 160);
-  border: 2px solid white;
+  background-color: rgb(160, 204, 255);
+  border: 2px solid rgb(211, 233, 255);
 }
 
 .search-bar:hover::placeholder {
@@ -95,7 +122,7 @@ header{
 .search-button {
   border-radius: 10px;
   width: 90px;
-  background-color: rgb(255, 222, 160);
+  background-color: rgb(160, 204, 255);
   border: 1.5px solid white;
 }
 
@@ -110,35 +137,47 @@ header{
 
 
 /* TEMP STUFF */
- /* Dropdown Button */
- .dropbtn {
-  background-color: #3498DB;
+/* Dropdown Button */
+.dropbtn {
+  background-color: #002136;
   color: white;
   padding: 16px;
   font-size: 16px;
   border: none;
   cursor: pointer;
+
 }
 
 /* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #2980B9;
+.dropbtn:hover,
+.dropbtn:focus {
+  background-color: #160139;
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
   position: relative;
   display: inline-block;
+  margin-bottom: 80px;
+
 }
 
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
   display: none;
+
   position: absolute;
   background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.filter {
+  margin: 5px
 }
 
 /* Links inside the dropdown */
@@ -146,11 +185,15 @@ header{
   color: black;
   padding: 12px 16px;
   text-decoration: none;
-  display: block;
+  display: none;
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;} 
+.show {
+  display: flex;
+}
