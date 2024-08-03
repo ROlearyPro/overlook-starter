@@ -5,43 +5,51 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Webpack Starter Kit</title>
+  <title>Overlook</title>
 </head>
 
-<body>
+<body id="home">
   <header>
+    <title class="overlook-title">OVERLOOK</title>
+
     <div class="logo-container">
       <img src="./images/turing-logo.png" alt="turing logo" class="turing-logo">
     </div>
-
-    <section class="username-display">
+    <section class="username-display" aria-label="Logged in as">
 
     </section>
   </header>
-  <section class="prev-reservation-area">
-
+  <section class="reservations">
+    <h2>
+      Previous Reservations
+    </h2>
+    <div class="prev-reservation-area" id="reservationArea" >
+    </div>
   </section>
+  <section class="price-area">
+    <h3>Total spent:</h3>
+    <div class="price-zone">
+    </div>
+  </section>
+  <div class="input-container" role="form" id="input-area" >
+    <label for="searchInput"> Search:</label>
 
-
-
-  <section class="price-zone"></section>
-
-
-  <div class="input-container">
-    <input class="input-bar" id="searchInput" type="text" aria-label="Search for rooms" placeholder="Search for a room">
-    <button class="search-button" id="quick-search-button">Search</button>
+    <input class="input-bar" id="searchInput" type="text"  aria-label="Search for rooms">
+    <button class="search-button" id="date-search-button" name="date-search-button" aria-label="search for room">Search</button>
   </div>
+  
   <div class="dropdown">
-    <button class="dropbtn">Dropdown</button>
-    <div id="myDropdown" class="dropdown-content">
-      <button class="filter filter-type-single">single room</button>
-      <button class="filter filter-type-junior">junior suite</button>
-      <button class="filter filter-type-suite">suite</button>
-      <button class="filter filter-type-residential">residential suite</button>
+    <button class="dropbtn"  aria-haspopup="true">Filters</button>
+    <div id="filterDropDown" class="dropdown-content" aria-expanded="false" aria-label="Show Filters">
+      <button class="filter filter-type-single" aria-label="single room filter">single room</button>
+      <button class="filter filter-type-junior" aria-label="junior suite filter">junior suite</button>
+      <button class="filter filter-type-suite" aria-label="suite filter">suite</button>
+      <button class="filter filter-type-residential" aria-label="residential suite filter">residential suite</button>
+      <button class="filter filter-type-none" aria-label="use no filter">no filter</button>
     </div>
   </div>
   <section class="search-results">
-    
+
 
   </section>
 

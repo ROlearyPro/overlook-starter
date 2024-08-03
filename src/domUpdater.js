@@ -10,10 +10,13 @@ const filterButtonSingle = document.querySelector('.filter-type-single');
 const filterButtonJunior = document.querySelector('.filter-type-junior');
 const filterButtonSuite = document.querySelector('.filter-type-suite');
 const filterButtonResidential = document.querySelector('.filter-type-residential');
+const filterButtonNone = document.querySelector('.filter-type-none');
 filterButtonSingle.filterVal = 'single room';
 filterButtonJunior.filterVal = 'junior suite';
 filterButtonSuite.filterVal = 'suite';
 filterButtonResidential.filterVal = 'residential suite';
+filterButtonNone.filterVal = null;
+
 let testArray = [];
 let currentDateSelection;
 
@@ -29,7 +32,7 @@ async function showBookedRooms() {
     // console.log(bookingDisplayData)
     reservationArea.innerHTML = null;
     bookingDisplayData.forEach(element => {
-        reservationArea.innerHTML += (`<div class = "customer-class container-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
+        reservationArea.innerHTML += (`<div class = "reservation-class reservation-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
     });
 }
 async function setUserName() {
@@ -73,7 +76,9 @@ async function userInput() {
 };
 
 const showFilterRoomType=()=> {
-    document.getElementById("myDropdown").classList.toggle("show");
+    document.getElementById("filterDropDown").classList.toggle("show");
+    document.getElementById("filterDropDown").classList.toggle("aria-expanded");
+
 }
 filterShowButton.addEventListener('click', showFilterRoomType)
 
@@ -91,6 +96,9 @@ filterButtonSuite.addEventListener('click', userInput);
 
 filterButtonResidential.addEventListener('click', setFilter);
 filterButtonResidential.addEventListener('click', userInput);
+
+filterButtonNone.addEventListener('click', setFilter);
+filterButtonNone.addEventListener('click', userInput);
 
 
 showBookedRooms();
