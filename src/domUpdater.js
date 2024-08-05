@@ -1,4 +1,4 @@
-import { customerPromise, currentCustomer, randomCustomer, setCustomer, loggedIn, setLoggedIn, handleCustomers } from './apiCaller.js';
+import { customerPromise, bookingsPromise, roomsPromise, handleBookings, handleRooms, currentCustomer, setCustomer, loggedIn, handleCustomers } from './apiCaller.js';
 import { setDataVals, currentBookings, hasSpent, findFreeRooms, currentFilter, bookRoom, setFilter, } from './functionCalls.js';
 const reservationArea = document.querySelector('.prev-reservation-area');
 const userNameArea = document.querySelector('.username-display');
@@ -26,33 +26,38 @@ filterButtonJunior.filterVal = 'junior suite';
 filterButtonSuite.filterVal = 'suite';
 filterButtonResidential.filterVal = 'residential suite';
 filterButtonNone.filterVal = null;
-
-
-Promise.all([customerPromise]).then((values) => { handleCustomers(values) })
+Promise.all([bookingsPromise]).then((values) => { handleBookings(values) });
+Promise.all([customerPromise]).then((values) => { handleCustomers(values) });
+Promise.all([roomsPromise]).then((values) => { handleRooms(values) });
+let recievedBookings;
+let receivedCustomers;
+let receivedRooms;
+let received;
 
 let testArray = [];
 let currentDateSelection;
 
 async function getLoginInfo() {
-    setDataVals();
+
     await setDataVals();
+    received = await setDataVals();
+
+    recievedBookings = received[0];
+    receivedCustomers = received[1];
+    receivedRooms = received[2];
 
     var username = document.querySelector('.username-bar').value;
     var password = document.querySelector('.password-bar').value;
-    if (username.indexOf("customer")===-1)
-    {
-        feedback.innerHTML= "Username not found. Try again?";
+    if (username.indexOf("customer") === -1) {
+        feedback.innerHTML = "Username not found. Try again?";
         return false;
 
     }
-    
+
     Promise.all([customerPromise]).then((values) => { setCustomer(values, username, password) })
-    console.log(loggedIn)
 
     await new Promise(r => setTimeout(r, 10));
-    console.log(loggedIn)
-    if(loggedIn===true)
-    {
+    if (loggedIn === true) {
         pageTop.classList.toggle('hidden')
         reservations.classList.toggle('hidden')
         prices.classList.toggle('hidden')
@@ -71,41 +76,57 @@ async function getLoginInfo() {
 }
 loginButton.addEventListener('click', getLoginInfo);
 
+async function updater() {
+    received = await setDataVals();
+    recievedBookings = received[0];
+    receivedCustomers = received[1];
+    receivedRooms = received[2];
 
+}
 
 async function showBookedRooms() {
-    
-    await setDataVals();
-
+    await updater()
     var bookingDisplayData = await currentBookings();
-    // console.log(bookingDisplayData)
     reservationArea.innerHTML = null;
     bookingDisplayData.forEach(element => {
         reservationArea.innerHTML += (`<div class = "reservation-class reservation-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
     });
 }
 async function setUserName() {
-    await setDataVals();
+    await updater()
     userNameArea.innerHTML = `<h1>${currentCustomer.name}</h1>`;
 }
 
+
 async function tester() {
-    await setDataVals();
+    await updater();
     priceZone.innerHTML = `<h4>${(await hasSpent(currentCustomer.id)).toFixed(2)} spent on rooms so far.</h4>`;
 }
 
+
 async function userInput() {
     const input = document.getElementById('searchInput').value;
-    console.log(input);
+
     var freeRooms;
-    freeRooms = await findFreeRooms(input, currentFilter);
+    await updater();
+    var bookedAlready = recievedBookings.filter((values) => (values.date === input)).map((room) => room.roomNumber);
+    var unbookedRooms = receivedRooms.filter((room) => !bookedAlready.includes(room.number))
+    freeRooms = await findFreeRooms(input, currentFilter, unbookedRooms);
+    await new Promise(r => setTimeout(r, 10));
+
     currentDateSelection = input;
-    console.log(currentDateSelection);
+
     var buttonArray = []
     searchResults.innerHTML = null;
-    if (freeRooms === null) {
+    console.log(freeRooms)
+    var emptyArr=[]
+    if (freeRooms.length === 0) {
         alert('We\'re so sorry! We currently do not have rooms available for that date. You might have better luck trying for a different day?');
-    } else {
+    } else if (freeRooms === "ERROR") {
+        alert("Sorry, that seems to be an invalid date!")
+        return;
+    }
+    else {
         for (var i = 0; i < freeRooms.length; i++) {
             searchResults.innerHTML += `<div class = "result-class container-for-results-${freeRooms[i].number}"> The ${freeRooms[i].roomType} with room number ${freeRooms[i].number} is free on ${input}. 
             <button class="book-button book-button-${freeRooms[i].number}" id="book-${freeRooms[i].number}">Book</button>
@@ -118,9 +139,10 @@ async function userInput() {
             buttonArray[i].currDate = currentDateSelection;
 
             buttonArray[i].addEventListener('click', bookRoom);
-            buttonArray[i].addEventListener('click', userInput);
             buttonArray[i].addEventListener('click', showBookedRooms);
             buttonArray[i].addEventListener('click', tester);
+            buttonArray[i].addEventListener('click', userInput);
+
 
         }
     };
@@ -133,24 +155,23 @@ const showFilterRoomType = () => {
 }
 
 
-const addEventListeners = ()=>{
-    console.log("adding");
+const addEventListeners = () => {
     filterShowButton.addEventListener('click', showFilterRoomType);
 
     searchRoomsButton.addEventListener('click', userInput);
     filterButtonSingle.addEventListener('click', setFilter);
     filterButtonSingle.addEventListener('click', userInput);
-    
+
     filterButtonJunior.addEventListener('click', setFilter);
     filterButtonJunior.addEventListener('click', userInput);
-    
+
     filterButtonSuite.addEventListener('click', setFilter);
     filterButtonSuite.addEventListener('click', userInput);
-    
+
     filterButtonResidential.addEventListener('click', setFilter);
     filterButtonResidential.addEventListener('click', userInput);
-    
+
     filterButtonNone.addEventListener('click', setFilter);
     filterButtonNone.addEventListener('click', userInput);
-    
+
 }

@@ -32,12 +32,9 @@ const handleBookings = (response) => {
 }
 const setLoggedIn= ()=>{
     loggedIn = true;
-    console.log(currentCustomer)
 }
 const setCurrentCustomer = (response) =>{
-    console.log(response.name)
     currentCustomer = response;
-    console.log(currentCustomer.name)
 }
 function setCustomer(response, username, password)
 {
@@ -81,10 +78,20 @@ function postBooking(date, customerID, roomNumber) {
 
 const updateInfo = () =>{
     customerPromise = fetch("http://localhost:3001/api/v1/customers").then((response) => response.json())
+    // .then(data => console.log(data))
+    // .catch(err => console.log('ERROR: ', err));
 
     roomsPromise = fetch("http://localhost:3001/api/v1/rooms").then((response) => response.json())
+    // .then(data => console.log(data))
+    // .catch(err => console.log('ERROR: ', err));
 
     bookingsPromise = fetch("http://localhost:3001/api/v1/bookings").then((response) => response.json())
+    // .then(data => console.log(data))
+    // .catch(err => console.log('ERROR: ', err));
+
+    firstCustomerPromise = fetch("http://localhost:3001/api/v1/customers/1").then((response) => response.json())
+    // .then(data => console.log(data))
+    // .catch(err => console.log('ERROR: ', err));
 
 }
 

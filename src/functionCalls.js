@@ -14,20 +14,17 @@ async function listData() {
     // console.log((await roomsPromise).rooms);
 }
 async function setDataVals() {
-    console.log(await bookingsPromise);
+    // console.log(await bookingsPromise);
     recievedBookings = (await bookingsPromise).bookings;
     receivedCustomers = (await customerPromise).customers;
     receivedRooms = (await roomsPromise).rooms;
-    // console.log(recievedBookings)
-    // console.log(receivedCustomers)
-    // console.log(receivedRooms)
-    return recievedBookings;
+ 
+    return [recievedBookings, receivedCustomers, receivedRooms];
 
 }
 async function currentBookings() {
     await Promise.all([bookingsPromise, customerPromise, roomsPromise])
-    await setCustomer;
-    // console.log(currentCustomer)
+    await currentCustomer;
     var userBookings = recievedBookings.filter((values) => (values.userID === currentCustomer.id));
     return userBookings
     // todo: Clean up, show in a table?
@@ -51,27 +48,27 @@ async function hasSpent(userID) {
     return totalSpent;
 }
 
-async function findFreeRooms(date, currentFilter = null) {
-    await setDataVals();
-    
-    var bookedAlready = recievedBookings.filter((values) => (values.date === date)).map((room) => room.roomNumber);
-    var unbookedRooms = receivedRooms.filter((room) => !bookedAlready.includes(room.number))
+function findFreeRooms(date, currentFilter = null, unbookedRooms ) {
+    if(isNaN(new Date(date)))
+        {
+            return "ERROR";
+        }
+        var tempForFilter;
+        tempForFilter = unbookedRooms;
 
-    //Todo: add text filtering to ensure date is entered correctly?//
     if (currentFilter !== null) {
-        var tempForFilter = unbookedRooms.filter((room) => room.roomType === currentFilter);
-        unbookedRooms = tempForFilter;
+         tempForFilter = unbookedRooms.filter((room) => room.roomType === currentFilter);
     }
-    return unbookedRooms;
+    return tempForFilter;
 }
 function bookRoom() {
-    console.log(this);
     var numHolder = this.roomNum;
     var currentDateSelection = this.currDate;
     postBooking(currentDateSelection, currentCustomer.id, numHolder);
     alert('Booking Info Submitted!');
 
     updateInfo();
+    return "booked";
 }
 
 
@@ -93,6 +90,6 @@ export {
     currentFilter,
     bookRoom,
     setFilter,
-
+    listData,
 
 }
