@@ -1,4 +1,4 @@
-import { bookingsPromise, customerPromise, roomsPromise, handleBookings, handleRooms, handleCustomers, currentCustomer, postBooking, updateInfo } from "./apiCaller";
+import { bookingsPromise, customerPromise, roomsPromise, handleBookings, handleRooms, handleCustomers, currentCustomer, postBooking, updateInfo, setCustomer } from "./apiCaller";
 Promise.all([bookingsPromise]).then((values) => { handleBookings(values) });
 Promise.all([customerPromise]).then((values) => { handleCustomers(values) });
 Promise.all([roomsPromise]).then((values) => { handleRooms(values) });
@@ -14,6 +14,7 @@ async function listData() {
     // console.log((await roomsPromise).rooms);
 }
 async function setDataVals() {
+    console.log(await bookingsPromise);
     recievedBookings = (await bookingsPromise).bookings;
     receivedCustomers = (await customerPromise).customers;
     receivedRooms = (await roomsPromise).rooms;
@@ -25,13 +26,15 @@ async function setDataVals() {
 }
 async function currentBookings() {
     await Promise.all([bookingsPromise, customerPromise, roomsPromise])
+    await setCustomer;
+    // console.log(currentCustomer)
     var userBookings = recievedBookings.filter((values) => (values.userID === currentCustomer.id));
     return userBookings
     // todo: Clean up, show in a table?
 }
 
 async function hasSpent(userID) {
-    // await currentCustomer;
+    await setCustomer;
     await setDataVals();
 
     var totalSpent = 0;
@@ -50,6 +53,7 @@ async function hasSpent(userID) {
 
 async function findFreeRooms(date, currentFilter = null) {
     await setDataVals();
+    
     var bookedAlready = recievedBookings.filter((values) => (values.date === date)).map((room) => room.roomNumber);
     var unbookedRooms = receivedRooms.filter((room) => !bookedAlready.includes(room.number))
 

@@ -6,11 +6,13 @@ var roomsPromise = fetch("http://localhost:3001/api/v1/rooms").then((response) =
 var bookingsPromise = fetch("http://localhost:3001/api/v1/bookings").then((response) => response.json());
 
 var firstCustomerPromise = fetch("http://localhost:3001/api/v1/customers/1").then((response) => response.json());
+
+
 let currentCustomer;
 let customerList = ["a", "b", "c"];
 let bookingData;
 let roomData;
-
+let loggedIn;
 
 const getRandomIndex = (array) => {
     return Math.floor(Math.random() * array.length);
@@ -27,6 +29,33 @@ const handleRooms = (response) => {
 
 const handleBookings = (response) => {
     bookingData = response;
+}
+const setLoggedIn= ()=>{
+    loggedIn = true;
+    console.log(currentCustomer)
+}
+const setCurrentCustomer = (response) =>{
+    console.log(response.name)
+    currentCustomer = response;
+    console.log(currentCustomer.name)
+}
+function setCustomer(response, username, password)
+{
+    customerList = response[0].customers;
+    var customerIDVal = username.replaceAll("customer", "");
+
+    if((customerList.indexOf((customerIDVal-1)))&&(password==="overlook2021"))
+    {
+        fetch(`http://localhost:3001/api/v1/customers/${customerIDVal}`)
+        .then((response) => response.json())
+        .then(data => setCurrentCustomer(data))
+        .catch(err => console.log('ERROR: ', err));;
+        setLoggedIn();
+}
+    else
+    {
+        alert("ERROR: your username or password does not appear to be correct. Please try again.")
+    }
 }
 
 async function randomCustomer(response) {
@@ -48,13 +77,15 @@ function postBooking(date, customerID, roomNumber) {
         .then(response => response.json())
         .then(data => console.log(data))
         .catch(err => console.log('ERROR: ', err));
-
 }
+
 const updateInfo = () =>{
-    customerPromise = fetch("http://localhost:3001/api/v1/customers").then((response) => response.json());
-    roomsPromise = fetch("http://localhost:3001/api/v1/rooms").then((response) => response.json());
-    bookingsPromise = fetch("http://localhost:3001/api/v1/bookings").then((response) => response.json());
-    firstCustomerPromise = fetch("http://localhost:3001/api/v1/customers/1").then((response) => response.json());
+    customerPromise = fetch("http://localhost:3001/api/v1/customers").then((response) => response.json())
+
+    roomsPromise = fetch("http://localhost:3001/api/v1/rooms").then((response) => response.json())
+
+    bookingsPromise = fetch("http://localhost:3001/api/v1/bookings").then((response) => response.json())
+
 }
 
 export {
@@ -72,4 +103,7 @@ export {
     handleCustomers,
     postBooking,
     updateInfo,
+    loggedIn,
+    setCustomer,
+    setLoggedIn,
 }

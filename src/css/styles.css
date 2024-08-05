@@ -227,3 +227,6 @@ header {
 .show {
   display: flex;
 }
+.hidden{
+  display:none;
+}
