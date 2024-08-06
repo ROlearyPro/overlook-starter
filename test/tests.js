@@ -321,27 +321,43 @@ describe('See if the servers are returning ', function () {
 
   it('should return a promise value', () => {
     var setVal = setDataVals();
+    expect(setVal).to.be.a('promise');
   })
 });
 
+
 describe('currentBookings()', () => {
+  it('Should be a function', () => {
+    expect(currentBookings).to.be.a('function');
+  })
+  it('should return a value', () => {
+    var getVal = currentBookings(13, bookings);
+    expect(getVal).to.be.a('array');
+  })
   it('should return an empty array', () => {
     var setVal = currentBookings(99, bookings);
-    expect(setVal).to.be.a('array');
-    // console.log(setVal)
+    expect(setVal).to.deep.equal([]);
   });
   it('Should return the an array with only the booking at index 5 on the list of all bookings', () => {
     var retVal = currentBookings(21, bookings);
-    // console.log(retVal[0]);
-    expect(retVal[0]).to.deep.equal(bookings[5])
+    expect(retVal[0]).to.deep.equal(bookings[5]);
   });
 
 });
 
 describe('findFreeRooms()', () => {
+  it('Should be a function', () => {
+    expect(findFreeRooms).to.be.a('function');
+  })
+  it('should be returning an array value.', () => {
+    var date = "2022/1/27";
+    var currentFilter = "single room";
+    var setval = findFreeRooms(date, currentFilter, unbookedRooms);
+    expect(setval).to.be.a('array')
+  });
   it('should successfully return a filtered array of rooms, previously determined to be unbooked for the date in question.', () => {
     var date = "2022/1/27";
-    var currentFilter = "single room"
+    var currentFilter = "single room";
     var setval = findFreeRooms(date, currentFilter, unbookedRooms);
     // console.log(setval)
     expect(setval).to.deep.equal([
@@ -365,9 +381,8 @@ describe('findFreeRooms()', () => {
   });
   it('should successfully return a different filtered array of rooms.', () => {
     var date = "2022/1/27";
-    var currentFilter = "residential suite"
+    var currentFilter = "residential suite";
     var setval = findFreeRooms(date, currentFilter, unbookedRooms);
-    // console.log(setval)
     expect(setval).to.deep.equal([
       {
         number: 20,
@@ -393,75 +408,77 @@ describe('findFreeRooms()', () => {
     var checkDate = findFreeRooms(date, currentFilter, unbookedRooms);
     expect(checkDate).to.equal("ERROR: 2023/81/9 is an invalid date.");
   })
-
   it('Should recognize when a different kind of invalid date has been entered.', () => {
     var date = "mayonnaise";
     var currentFilter;
     var checkDate = findFreeRooms(date, currentFilter, unbookedRooms);
     expect(checkDate).to.equal("ERROR: mayonnaise is an invalid date.");
   })
-
 });
+
+
 describe('bookRoomTestSuite()', () => {
+  it('Should be a function', () => {
+    expect(bookRoomTestSuite).to.be.a('function');
+  })
+
+  it('should be returning a string.', () => {
+    var roomNum = 9;
+    var date = '2022/02/19';
+    var customerID = 5;
+    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings);
+    expect(returned).to.be.a('string');
+  });
   it('should confirm that it would have been posted, and would not have overlapped with any of the previous bookings.', () => {
     var roomNum = 9;
     var date = '2022/02/19';
-    var customerID = 5
-
-    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings)
-    expect(returned).to.equal("Successfully (would've) posted a booking with a date of 2022/02/19, a customer ID of 5, and a room number of 9. Additionally, this booking was not already in the received bookings.")
-
+    var customerID = 5;
+    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings);
+    expect(returned).to.equal("Successfully (would've) posted a booking with a date of 2022/02/19, a customer ID of 5, and a room number of 9. Additionally, this booking was not already in the received bookings.");
   });
   it('should confirm that a different value would also work when trying to post it, and would not have overlapped with any of the previous bookings.', () => {
     var roomNum = 12;
     var date = '2025/05/19';
-    var customerID = 3
-
-    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings)
-    expect(returned).to.equal("Successfully (would've) posted a booking with a date of 2025/05/19, a customer ID of 3, and a room number of 12. Additionally, this booking was not already in the received bookings.")
-
+    var customerID = 3;
+    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings);
+    expect(returned).to.equal("Successfully (would've) posted a booking with a date of 2025/05/19, a customer ID of 3, and a room number of 12. Additionally, this booking was not already in the received bookings.");
   });
-
   it('should return a string saying it ended in failure, because the room was already booked.', () => {
     var roomNum = 8;
     var date = '2022/02/19';
-    var customerID = 5
-
-    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings)
-    expect(returned).to.equal("ERROR, this booking doesn't actually seem to be available! Room number 8 is already booked for 2022/02/19.")
-
+    var customerID = 5;
+    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings);
+    expect(returned).to.equal("ERROR, this booking doesn't actually seem to be available! Room number 8 is already booked for 2022/02/19.");
   });
   it('should return a string saying it ended in failure, because either the room number or customer id was not a valid number.', () => {
     var roomNum = 8;
     var date = '2022/02/19';
-    var customerID = "Twelve"
-
-    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings)
-    expect(returned).to.equal("ERROR: One or both of the room number 8 or the customer ID Twelve are not valid numbers.")
-
+    var customerID = "Twelve";
+    var returned = bookRoomTestSuite(roomNum, date, customerID, bookings);
+    expect(returned).to.equal("ERROR: One or both of the room number 8 or the customer ID Twelve are not valid numbers.");
   });
 });
+
+
 describe('hasSpent()', () => {
   it('Should be a function', () => {
     expect(hasSpent).to.be.a('function');
   })
-  it('Should take in a set of bookings, rooms, and a customerID value in order to find out how much that customer ID has spent in the past.', ()=>{
-
+  it('Should return a number.', () => {
     var returnVal = hasSpent(20, bookings, roomsData);
-    expect (returnVal).to.equal(663.31)
-
+    expect(returnVal).to.be.a('number');
   })
-  it('Should take in a set of bookings, rooms, and a different customerID value in order to find out how much that customer ID has spent in the past.', ()=>{
 
+  it('Should take in a set of bookings, rooms, and a customerID value in order to find out how much that customer ID has spent in the past.', () => {
+    var returnVal = hasSpent(20, bookings, roomsData);
+    expect(returnVal).to.equal(663.31);
+  })
+  it('Should take in a set of bookings, rooms, and a different customerID value in order to find out how much that customer ID has spent in the past.', () => {
     var returnVal = hasSpent(48, bookings, roomsData);
-    expect (returnVal).to.equal(774.23)
-
+    expect(returnVal).to.equal(774.23);
   })
-  it('Should return an error message if one or mor of the input values are of the incorrect type.', ()=>{
+  it('Should return an error message if one or more of the input values are of the incorrect type.', () => {
     var returnVal = hasSpent("blueberry", bookings.toString(), 45);
-    expect (returnVal).to.equal("ERROR: One or more of the input parameters were not of the correct type.")
-
+    expect(returnVal).to.equal("ERROR: One or more of the input parameters were not of the correct type.");
   })
-
-
 });

@@ -40,15 +40,18 @@ async function getLoginInfo() {
     var username = document.querySelector('.username-bar').value;
     var password = document.querySelector('.password-bar').value;
     if (username.indexOf("customer") === -1) {
-        feedback.innerHTML = "Username not found. Try again?";
+        feedback.innerHTML = "Your Username does not appear to be in the correct format. Try again?";
         return false;
 
     }
-
     Promise.all([customerPromise]).then((values) => { setCustomer(values, username, password) })
+    await (currentCustomer);
+    console.log(currentCustomer)
 
     await new Promise(r => setTimeout(r, 10));
+
     if (loggedIn === true) {
+
         pageTop.classList.toggle('hidden')
         reservations.classList.toggle('hidden')
         prices.classList.toggle('hidden')
@@ -56,14 +59,17 @@ async function getLoginInfo() {
         dropDown.classList.toggle('hidden')
         searchResults.classList.toggle('hidden')
         loginArea.classList.toggle('hidden')
-    }
-    await new Promise(r => setTimeout(r, 100));
-    addEventListeners();
-    setUserName();
 
-    showBookedRooms();
-    currentBookings(currentCustomer.id, bookingData);
-    tester();
+        console.log(currentCustomer)
+        console.log(currentCustomer.id)
+        addEventListeners();
+        setUserName();
+        showBookedRooms();
+        currentBookings( currentCustomer.id, bookingData);
+        tester();
+    }
+    console.log(loggedIn)
+ 
 }
 loginButton.addEventListener('click', getLoginInfo);
 
@@ -72,30 +78,32 @@ async function updater() {
     receivedBookings = received[0];
     receivedCustomers = received[1];
     receivedRooms = received[2];
-
-    console.log(receivedBookings)
+    // await currentCustomer;
     
 }
 
 async function showBookedRooms() {
     await updater()
-    var bookingDisplayData = await currentBookings(currentCustomer.id, receivedBookings);
+    var bookingDisplayData = currentBookings((await currentCustomer).id, receivedBookings);
     reservationArea.innerHTML = null;
     bookingDisplayData.forEach(element => {
         reservationArea.innerHTML += (`<div class = "reservation-class reservation-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
     });
-    
+
 }
 async function setUserName() {
 
     await updater()
-    userNameArea.innerHTML = `<h1>${currentCustomer.name}</h1>`;
+    userNameArea.innerHTML = `<h1>${(await currentCustomer).name}</h1>`;
 }
 
 
 async function tester() {
     await updater();
-    priceZone.innerHTML = `<h4>${(await hasSpent(currentCustomer.id, receivedBookings, receivedRooms)).toFixed(2)} spent on rooms so far.</h4>`;
+    var tempCust = (await currentCustomer)
+    var spentVal = (hasSpent(tempCust.id, receivedBookings, receivedRooms));
+    console.log( spentVal)
+    priceZone.innerHTML = `<h4>${spentVal.toFixed(2)} spent on rooms so far.</h4>`;
 }
 
 
@@ -107,6 +115,7 @@ async function userInput() {
     var bookedAlready = receivedBookings.filter((values) => (values.date === input)).map((room) => room.roomNumber);
     var unbookedRooms = receivedRooms.filter((room) => !bookedAlready.includes(room.number))
     freeRooms = await findFreeRooms(input, currentFilter, unbookedRooms);
+    await currentCustomer;
     await new Promise(r => setTimeout(r, 10));
 
     currentDateSelection = input;
@@ -114,6 +123,11 @@ async function userInput() {
     var buttonArray = []
     searchResults.innerHTML = null;
     var emptyArr = []
+    if (isNaN(new Date(currentDateSelection))||currentDateSelection.length!==10) {
+        alert("Sorry, that doesn't seem to be a valid date, or you might have formatted it incorrectly. Please try again.")
+        return ("ERROR: " + currentDateSelection + " is an invalid date.");
+    }
+
     if (freeRooms.length === 0) {
         alert('We\'re so sorry! We currently do not have rooms available for that date. You might have better luck trying for a different day?');
     } else if (freeRooms === "ERROR") {

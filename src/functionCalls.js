@@ -20,13 +20,17 @@ async function setDataVals() {
 
 }
 const currentBookings = (customerID, receivedBookingsData) => {
+    console.log(customerID);
     var userBookings = receivedBookingsData.filter((values) => (values.userID === customerID));
+    console.log(userBookings);
     return userBookings
 }
 
 const hasSpent = (userID, receivedBookingsData, receivedRoomsData) => {
-    if (typeof userID !== 'number' ||typeof receivedBookingsData !=='object'|| typeof receivedRoomsData !== 'object') {
+    if (typeof userID !== 'number' || typeof receivedBookingsData !== 'object' || typeof receivedRoomsData !== 'object') {
+        console.log("UserID:" + userID + " ReceivedBookingsData:" + receivedBookingsData + " ReceivedRoomsData:" + receivedRoomsData)
         return ("ERROR: One or more of the input parameters were not of the correct type.")
+
     }
     var totalSpent = 0;
     var userBookedRooms = receivedBookingsData.filter((values) => (values.userID === userID));
@@ -54,17 +58,26 @@ const findFreeRooms = (date, currentFilter = null, unbookedRooms) => {
     }
     return tempForFilter;
 }
-function bookRoom() {
+async function bookRoom() {
     var numHolder = this.roomNum;
     var currentDateSelection = this.currDate;
     var bookings = this.bookings;
+
+    console.log(numHolder)
     if (isNaN(new Date(currentDateSelection))) {
+        console.log("Error with date")
+        console.log(currentDateSelection)
         return ("ERROR: " + currentDateSelection + " is an invalid date.");
+
     }
-    if (typeof numHolder !== 'number' || typeof currentCustomer.id !== 'number') {
+    if (typeof numHolder !== 'number' || typeof (await currentCustomer).id !== 'number') {
+        console.log("Error with type of numHolder or currentCustomer.id")
+        console.log(numHolder);
+        console.log(currentCustomer.id)
         return ("ERROR: One or both of the room number " + numHolder + " or the customer ID " + currentCustomer.id + " are not valid numbers.")
     }
-    postBooking(currentDateSelection, currentCustomer.id, numHolder, bookings);
+    await currentCustomer
+    postBooking(currentDateSelection, (await currentCustomer).id, numHolder, bookings);
     alert('Booking Info Submitted!');
 
     updateInfo();

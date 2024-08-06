@@ -34,21 +34,28 @@ const setLoggedIn = () => {
     loggedIn = true;
 }
 const setCurrentCustomer = (response) => {
+    console.log(currentCustomer)
+
     currentCustomer = response;
+    console.log(currentCustomer)
+
 }
 function setCustomer(response, username, password) {
     customerList = response[0].customers;
     var customerIDVal = username.replaceAll("customer", "");
-
-    if ((customerList.indexOf((customerIDVal - 1))) && (password === "overlook2021")) {
-        fetch(`http://localhost:3001/api/v1/customers/${customerIDVal}`)
-            .then((response) => response.json())
-            .then(data => setCurrentCustomer(data))
-            .catch(err => console.log('ERROR: ', err));;
+    console.log(customerIDVal)
+  
+    console.log(customerList[customerIDVal-1])
+    if (((customerList[customerIDVal-1])!==undefined) && (password === "overlook2021")) {
+        console.log('Goes in')
+        var customerData = fetch(`http://localhost:3001/api/v1/customers/${customerIDVal}`).then((response) => response.json());
+        setCurrentCustomer(customerData);
         setLoggedIn();
+        
     }
     else {
-        alert("ERROR: your username or password does not appear to be correct. Please try again.")
+        alert("ERROR: your username or password has the correct format, but does not appear to be in our databases. Please try again.")
+        return;
     }
 }
 
