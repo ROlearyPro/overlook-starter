@@ -1,76 +1,89 @@
-import { bookingsPromise, customerPromise, roomsPromise, handleBookings, handleRooms, handleCustomers, currentCustomer, postBooking, updateInfo, setCustomer } from "./apiCaller";
+import { bookingsPromise, customerPromise, roomsPromise, handleBookings, handleRooms, handleCustomers, currentCustomer, postBooking, updateInfo, testPostBooking, setCustomer } from "./apiCaller";
 Promise.all([bookingsPromise]).then((values) => { handleBookings(values) });
 Promise.all([customerPromise]).then((values) => { handleCustomers(values) });
 Promise.all([roomsPromise]).then((values) => { handleRooms(values) });
-let recievedBookings;
+let receivedBookings;
 let receivedCustomers;
 let receivedRooms;
 let currentFilter;
 
 
 async function listData() {
-    // console.log((await bookingsPromise).bookings);
-    // console.log((await customerPromise).customers);
-    // console.log((await roomsPromise).rooms);
+
 }
 async function setDataVals() {
-    // console.log(await bookingsPromise);
-    recievedBookings = (await bookingsPromise).bookings;
+    receivedBookings = (await bookingsPromise).bookings;
     receivedCustomers = (await customerPromise).customers;
     receivedRooms = (await roomsPromise).rooms;
- 
-    return [recievedBookings, receivedCustomers, receivedRooms];
+
+    return [receivedBookings, receivedCustomers, receivedRooms];
 
 }
-async function currentBookings() {
-    await Promise.all([bookingsPromise, customerPromise, roomsPromise])
-    await currentCustomer;
-    var userBookings = recievedBookings.filter((values) => (values.userID === currentCustomer.id));
+const currentBookings = (customerID, receivedBookingsData) => {
+    var userBookings = receivedBookingsData.filter((values) => (values.userID === customerID));
     return userBookings
-    // todo: Clean up, show in a table?
 }
 
-async function hasSpent(userID) {
-    await setCustomer;
-    await setDataVals();
-
+const hasSpent = (userID, receivedBookingsData, receivedRoomsData) => {
+    if (typeof userID !== 'number' ||typeof receivedBookingsData !=='object'|| typeof receivedRoomsData !== 'object') {
+        return ("ERROR: One or more of the input parameters were not of the correct type.")
+    }
     var totalSpent = 0;
-    var userBookedRooms = recievedBookings.filter((values) => (values.userID === userID));
+    var userBookedRooms = receivedBookingsData.filter((values) => (values.userID === userID));
     var timesPaidFor = {};
     var roomsPaidFor = userBookedRooms.map((room) => room.roomNumber);
     for (const roomNum of roomsPaidFor) {
         timesPaidFor[roomNum] = timesPaidFor[roomNum] ? timesPaidFor[roomNum] + 1 : 1;
     }
     for (const roomNum of roomsPaidFor) {
-        var roomCost = receivedRooms.find((room) => room.number === roomNum).costPerNight;
+        var roomCost = receivedRoomsData.find((room) => room.number === roomNum).costPerNight;
         totalSpent += roomCost;
     }
     return totalSpent;
 }
 
-function findFreeRooms(date, currentFilter = null, unbookedRooms ) {
-    if(isNaN(new Date(date)))
-        {
-            return "ERROR";
-        }
-        var tempForFilter;
-        tempForFilter = unbookedRooms;
+const findFreeRooms = (date, currentFilter = null, unbookedRooms) => {
+    if (isNaN(new Date(date))) {
+        return ("ERROR: " + date + " is an invalid date.");
+    }
+    var tempForFilter;
+    tempForFilter = unbookedRooms;
 
     if (currentFilter !== null) {
-         tempForFilter = unbookedRooms.filter((room) => room.roomType === currentFilter);
+        tempForFilter = unbookedRooms.filter((room) => room.roomType === currentFilter);
     }
     return tempForFilter;
 }
 function bookRoom() {
     var numHolder = this.roomNum;
     var currentDateSelection = this.currDate;
-    postBooking(currentDateSelection, currentCustomer.id, numHolder);
+    var bookings = this.bookings;
+    if (isNaN(new Date(currentDateSelection))) {
+        return ("ERROR: " + currentDateSelection + " is an invalid date.");
+    }
+    if (typeof numHolder !== 'number' || typeof currentCustomer.id !== 'number') {
+        return ("ERROR: One or both of the room number " + numHolder + " or the customer ID " + currentCustomer.id + " are not valid numbers.")
+    }
+    postBooking(currentDateSelection, currentCustomer.id, numHolder, bookings);
     alert('Booking Info Submitted!');
 
     updateInfo();
     return "booked";
 }
 
+function bookRoomTestSuite(roomNum, currDate, customerID, bookings) {
+    var numHolder = roomNum;
+    var currentDateSelection = currDate;
+    var bookings = bookings;
+    if (isNaN(new Date(currentDateSelection))) {
+        return ("ERROR: " + currentDateSelection + " is an invalid date.");
+    }
+    if (typeof numHolder !== 'number' || typeof customerID !== 'number') {
+        return ("ERROR: One or both of the room number " + numHolder + " or the customer ID " + customerID + " are not valid numbers.")
+    }
+    return testPostBooking(currentDateSelection, customerID, numHolder, bookings);
+    // return "booked";
+}
 
 function setFilter() {
     currentFilter = this.filterVal;
@@ -80,9 +93,9 @@ function setFilter() {
 
 
 export {
-    receivedCustomers,
-    receivedRooms,
-    recievedBookings,
+    // receivedCustomers,
+    // receivedRooms,
+    // receivedBookings,
     setDataVals,
     currentBookings,
     hasSpent,
@@ -90,6 +103,7 @@ export {
     currentFilter,
     bookRoom,
     setFilter,
-    listData,
+    bookRoomTestSuite,
+
 
 }

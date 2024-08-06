@@ -35,6 +35,15 @@ header {
   border: 3px solid rgb(70, 115, 252);
   justify-content: center;
 }
+.login-area{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    background-color: rgb(207, 209, 249);
+    border: 3px solid rgb(70, 115, 252);
+    justify-content: space-around;
+  
+}
 
 .prev-reservation-area {
   /* border: 1px solid rgb(70, 115, 252); */

@@ -1,4 +1,4 @@
-import { customerPromise, bookingsPromise, roomsPromise, handleBookings, handleRooms, currentCustomer, setCustomer, loggedIn, handleCustomers } from './apiCaller.js';
+import { customerPromise, bookingsPromise, roomsPromise, handleBookings, handleRooms, currentCustomer, setCustomer, loggedIn, handleCustomers, bookingData } from './apiCaller.js';
 import { setDataVals, currentBookings, hasSpent, findFreeRooms, currentFilter, bookRoom, setFilter, } from './functionCalls.js';
 const reservationArea = document.querySelector('.prev-reservation-area');
 const userNameArea = document.querySelector('.username-display');
@@ -26,10 +26,7 @@ filterButtonJunior.filterVal = 'junior suite';
 filterButtonSuite.filterVal = 'suite';
 filterButtonResidential.filterVal = 'residential suite';
 filterButtonNone.filterVal = null;
-Promise.all([bookingsPromise]).then((values) => { handleBookings(values) });
-Promise.all([customerPromise]).then((values) => { handleCustomers(values) });
-Promise.all([roomsPromise]).then((values) => { handleRooms(values) });
-let recievedBookings;
+let receivedBookings;
 let receivedCustomers;
 let receivedRooms;
 let received;
@@ -38,13 +35,7 @@ let testArray = [];
 let currentDateSelection;
 
 async function getLoginInfo() {
-
-    await setDataVals();
-    received = await setDataVals();
-
-    recievedBookings = received[0];
-    receivedCustomers = received[1];
-    receivedRooms = received[2];
+    await updater();
 
     var username = document.querySelector('.username-bar').value;
     var password = document.querySelector('.password-bar').value;
@@ -71,28 +62,32 @@ async function getLoginInfo() {
     setUserName();
 
     showBookedRooms();
-    currentBookings();
+    currentBookings(currentCustomer.id, bookingData);
     tester();
 }
 loginButton.addEventListener('click', getLoginInfo);
 
 async function updater() {
     received = await setDataVals();
-    recievedBookings = received[0];
+    receivedBookings = received[0];
     receivedCustomers = received[1];
     receivedRooms = received[2];
 
+    console.log(receivedBookings)
+    
 }
 
 async function showBookedRooms() {
     await updater()
-    var bookingDisplayData = await currentBookings();
+    var bookingDisplayData = await currentBookings(currentCustomer.id, receivedBookings);
     reservationArea.innerHTML = null;
     bookingDisplayData.forEach(element => {
         reservationArea.innerHTML += (`<div class = "reservation-class reservation-for-customer-${element.userID}"> Reservation for room number ${element.roomNumber}, on ${element.date} </div>`);
     });
+    
 }
 async function setUserName() {
+
     await updater()
     userNameArea.innerHTML = `<h1>${currentCustomer.name}</h1>`;
 }
@@ -100,7 +95,7 @@ async function setUserName() {
 
 async function tester() {
     await updater();
-    priceZone.innerHTML = `<h4>${(await hasSpent(currentCustomer.id)).toFixed(2)} spent on rooms so far.</h4>`;
+    priceZone.innerHTML = `<h4>${(await hasSpent(currentCustomer.id, receivedBookings, receivedRooms)).toFixed(2)} spent on rooms so far.</h4>`;
 }
 
 
@@ -109,7 +104,7 @@ async function userInput() {
 
     var freeRooms;
     await updater();
-    var bookedAlready = recievedBookings.filter((values) => (values.date === input)).map((room) => room.roomNumber);
+    var bookedAlready = receivedBookings.filter((values) => (values.date === input)).map((room) => room.roomNumber);
     var unbookedRooms = receivedRooms.filter((room) => !bookedAlready.includes(room.number))
     freeRooms = await findFreeRooms(input, currentFilter, unbookedRooms);
     await new Promise(r => setTimeout(r, 10));
@@ -118,8 +113,7 @@ async function userInput() {
 
     var buttonArray = []
     searchResults.innerHTML = null;
-    console.log(freeRooms)
-    var emptyArr=[]
+    var emptyArr = []
     if (freeRooms.length === 0) {
         alert('We\'re so sorry! We currently do not have rooms available for that date. You might have better luck trying for a different day?');
     } else if (freeRooms === "ERROR") {
@@ -137,6 +131,7 @@ async function userInput() {
             buttonArray[i] = document.querySelector(`.book-button-${freeRooms[i].number}`);
             buttonArray[i].roomNum = freeRooms[i].number;
             buttonArray[i].currDate = currentDateSelection;
+            buttonArray[i].bookings = receivedBookings;
 
             buttonArray[i].addEventListener('click', bookRoom);
             buttonArray[i].addEventListener('click', showBookedRooms);

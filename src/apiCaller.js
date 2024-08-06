@@ -30,27 +30,24 @@ const handleRooms = (response) => {
 const handleBookings = (response) => {
     bookingData = response;
 }
-const setLoggedIn= ()=>{
+const setLoggedIn = () => {
     loggedIn = true;
 }
-const setCurrentCustomer = (response) =>{
+const setCurrentCustomer = (response) => {
     currentCustomer = response;
 }
-function setCustomer(response, username, password)
-{
+function setCustomer(response, username, password) {
     customerList = response[0].customers;
     var customerIDVal = username.replaceAll("customer", "");
 
-    if((customerList.indexOf((customerIDVal-1)))&&(password==="overlook2021"))
-    {
+    if ((customerList.indexOf((customerIDVal - 1))) && (password === "overlook2021")) {
         fetch(`http://localhost:3001/api/v1/customers/${customerIDVal}`)
-        .then((response) => response.json())
-        .then(data => setCurrentCustomer(data))
-        .catch(err => console.log('ERROR: ', err));;
+            .then((response) => response.json())
+            .then(data => setCurrentCustomer(data))
+            .catch(err => console.log('ERROR: ', err));;
         setLoggedIn();
-}
-    else
-    {
+    }
+    else {
         alert("ERROR: your username or password does not appear to be correct. Please try again.")
     }
 }
@@ -59,24 +56,58 @@ async function randomCustomer(response) {
     customerList = response[0].customers;
     currentCustomer = customerList[getRandomIndex(customerList)];
 };
-function postBooking(date, customerID, roomNumber) {
-    fetch('http://localhost:3001/api/v1/bookings', {
-        method: 'POST',
-        body: JSON.stringify({
-            userID: customerID,
-            date: date,
-            roomNumber: roomNumber,       
-        }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(err => console.log('ERROR: ', err));
+function postBooking(date, customerID, roomNumber, receivedBookings) {
+    if (!receivedBookings.includes(receivedBookings.filter((values) => (values.date === date) && (values.userID === customerID) && (values.roomNumber === roomNumber)))) {
+        fetch('http://localhost:3001/api/v1/bookings', {
+            method: 'POST',
+            body: JSON.stringify({
+                userID: customerID,
+                date: date,
+                roomNumber: roomNumber,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(err => console.log('ERROR: ', err));
+    }
+    else {
+        alert("ERROR, this booking doesn't actually seem to be available!")
+    }
 }
 
-const updateInfo = () =>{
+function testPostBooking(date, customerID, roomNumber, receivedBookings){
+    // console.log(date)
+    // console.log(customerID)
+    // console.log(roomNumber)
+    // console.log(receivedBookings.filter((values) => (values.date === date) && (values.roomNumber === roomNumber)));
+    // console.log(receivedBookings.includes(receivedBookings.filter((values) => (values.date === date) && (values.roomNumber === roomNumber))))
+    if (receivedBookings.filter((values) => (values.date === date) && (values.roomNumber === roomNumber)).length===0) {
+        // console.log(`('http://localhost:3001/api/v1/bookings', {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         userID: ${customerID},
+        //         date: ${date},
+        //         roomNumber: ${roomNumber},
+        //     }),
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // })`)
+        // console.log(receivedBookings)
+        // console.log("Wouldn't have overlapped, would have successfully posted")
+        return (`Successfully (would've) posted a booking with a date of ${date}, a customer ID of ${customerID}, and a room number of ${roomNumber}. Additionally, this booking was not already in the received bookings.`)
+    }
+    else {
+        // console.log(`ERROR, this booking doesn't actually seem to be available! Room number ${roomNumber} is already booked for ${date}.`)
+        return `ERROR, this booking doesn't actually seem to be available! Room number ${roomNumber} is already booked for ${date}.`
+    }
+
+}
+
+const updateInfo = () => {
     customerPromise = fetch("http://localhost:3001/api/v1/customers").then((response) => response.json())
     // .then(data => console.log(data))
     // .catch(err => console.log('ERROR: ', err));
@@ -113,4 +144,5 @@ export {
     loggedIn,
     setCustomer,
     setLoggedIn,
+    testPostBooking,
 }
