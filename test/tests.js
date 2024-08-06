@@ -1,5 +1,5 @@
 import chai from 'chai';
-import { bookRoom, bookRoomTestSuite, currentBookings, currentFilter, findFreeRooms, hasSpent, listData, setDataVals } from '../src/functionCalls.js';
+import { bookRoomTestSuite, currentBookings, findFreeRooms, hasSpent, setDataVals } from '../src/functionCalls.js';
 
 const expect = chai.expect;
 var bookings = [{

@@ -53,10 +53,6 @@ function setCustomer(response, username, password) {
     }
 }
 
-async function randomCustomer(response) {
-    customerList = response[0].customers;
-    currentCustomer = customerList[getRandomIndex(customerList)];
-};
 
 function postBooking(date, customerID, roomNumber, receivedBookings) {
     if (!receivedBookings.includes(receivedBookings.filter((values) => (values.date === date) && (values.userID === customerID) && (values.roomNumber === roomNumber)))) {
