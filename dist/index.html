@@ -1,16 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Webpack Starter Kit</title>
+  <title>Overlook</title>
 </head>
-<body>
-  <img src="./images/turing-logo.png" alt="turing logo">
-  
+
+<body id="home">
+  <header class="page-top hidden">
+    <div class="logo-container">
+      <img src="./images/turing-logo.png" alt="turing logo" class="turing-logo">
+    </div>
+    <section class="username-display" aria-label="Logged in as"></section>
+
+  </header>
+  <section class="login-area">
+    <div>
+      <label for="usernameInput"> Username:</label>
+
+      <input class="username-bar input-bar" id="usernameInput" type="text" aria-label="Enter your Username">
+    </div>
+
+    <div> <label for="passwordInput"> Password:</label>
+
+      <input class="password-bar input-bar" id="passwordInput" type="text" aria-label="Enter your Password">
+    </div>
+    <div> <button class="login-button" id="date-search-button" name="date-search-button"
+        aria-label="search for room">Search</button></div>
+
+    <div class="feedback">
+
+    </div>
+
+  </section>
+
+  <section class="reservations hidden">
+    <h2>
+      Previous Reservations
+    </h2>
+    <div class="prev-reservation-area" id="reservationArea">
+    </div>
+  </section>
+  <section class="price-area hidden">
+    <h3>Total spent:</h3>
+    <div class="price-zone">
+    </div>
+  </section>
+  <div class="input-container hidden" role="form" id="input-area">
+    <label for="searchInput"> Search:</label>
+
+    <input class="input-bar" id="searchInput" type="text" aria-label="Search for rooms">
+    <button class="search-button" id="date-search-button" name="date-search-button"
+      aria-label="search for room">Search</button>
+  </div>
+
+  <div class="dropdown hidden">
+    <button class="dropbtn" aria-haspopup="true">Filters</button>
+    <div id="filterDropDown" class="dropdown-content" aria-expanded="false" aria-label="Show Filters">
+      <button class="filter filter-type-single" aria-label="single room filter">single room</button>
+      <button class="filter filter-type-junior" aria-label="junior suite filter">junior suite</button>
+      <button class="filter filter-type-suite" aria-label="suite filter">suite</button>
+      <button class="filter filter-type-residential" aria-label="residential suite filter">residential suite</button>
+      <button class="filter filter-type-none" aria-label="use no filter">no filter</button>
+    </div>
+  </div>
+  <section class="search-results hidden">
+
+
+  </section>
+
+
+
   <!-- Do not include the scripts.js or class files here - it is done by the webpack server -->
   <script src="bundle.js"></script>
 
 </body>
+
 </html>
